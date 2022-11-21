@@ -6,6 +6,7 @@ app.use(express.urlencoded({ extended: false }));
 const path = require("path");
 const port = 3000;
 app.use(express.static("public"));
+app.use(express.static("public/manageQuestions"));
 //--------------------------------express set up
 let mysql = require("mysql");
 
@@ -26,6 +27,10 @@ conn.connect((err) => {
 
 app.get("/game", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
+app.get("/questions", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/manageQuestions/manage.html"));
 });
 
 app.get("/api/game", (req, res) => {
@@ -59,12 +64,26 @@ app.get("/api/game", (req, res) => {
   };
   apiHandler();
 });
+
 app.get("/api/questions", (req, res) => {
   const getQuestion = `SELECT * FROM quiz_app.questions`;
   conn.query(getQuestion, (err, rows) => {
     if (err) rej(err);
     res.send(rows);
   });
+});
+
+app.delete("/api/questions/:id", (req, res) => {
+  const id = req.params.id;
+  conn.query(`DELETE FROM questions where id=${id}`);
+  conn.query(`DELETE FROM answers WHERE question_id=${id}`);
+  res.sendStatus(200);
+});
+
+app.post("/api/questions", (req, res) => {
+  const question = req.body.question;
+  conn.query(`INSERT INTO questions VALUES(${question})`);
+  conn.query(`INSERT INTO answers VALUES(${answer},${is_correct})`);
 });
 
 app.listen(port, () => {

@@ -19,7 +19,7 @@ const createQuestion = (data) => {
   }
 
   const manageLink = document.createElement("a");
-  manageLink.href = "/manageLink";
+  manageLink.href = "/questions";
   manageLink.innerText = "Manage Link";
   wrapper.appendChild(manageLink);
 
