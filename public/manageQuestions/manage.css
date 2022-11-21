@@ -1,0 +1,25 @@
+html * {
+  box-sizing: border-box;
+}
+body {
+  background: linear-gradient(
+    12deg,
+    rgba(47, 47, 170, 1) 0%,
+    rgba(215, 215, 255, 1) 96%
+  );
+  background-repeat: no-repeat;
+  height: 100vh;
+
+  margin: 50px;
+}
+.manageWrapper {
+  display: grid;
+  justify-content: center;
+  margin-left: 10%;
+  width: 80%;
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  font-size: 30px;
+}

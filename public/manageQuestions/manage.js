@@ -1,13 +1,4 @@
 "use strict";
-//THIS PART WORKS WITH DELETE API
-const deleteHandler = (id) => {
-  fetch(`/api/questions/${id}`, {
-    method: "delete",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).catch((err) => err);
-};
 
 //THIS PART CREATES THE HTML FOR DELETE
 const createDeleteElements = (data) => {
@@ -55,6 +46,7 @@ const createQuestions = () => {
     name.setAttribute("type", "text");
     name.placeholder = placeholder;
     name.className = classname;
+    name.dataset.type = "input";
     createWrapper.appendChild(name);
   };
   const question = document.createElement("input");
@@ -70,7 +62,28 @@ const createQuestions = () => {
 
   body.appendChild(createWrapper);
 };
+/*const getInputValues = () => {
+  const inputs = document.querySelectorAll("[data-type=input]");
+  inputs.forEach((input) => {
+    input.addEventListener("change", (e) => {
+      if ((input.className = "inputQuestion")) {
+        const question = e.target.value;
+      }
+    });
+  });
+};*/
 
+//THIS PART WORKS WITH DELETE API
+const deleteHandler = (id) => {
+  fetch(`/api/questions/${id}`, {
+    method: "delete",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).catch((err) => err);
+};
+
+//THIS PART CREATES AND CALLS FUNCTIONS FOR HTML ELEMENT
 async function apiHandler() {
   const data = await fetch("/api/questions")
     .then((res) => res.json())
@@ -79,5 +92,6 @@ async function apiHandler() {
   createDeleteElements(data);
   deleteQuestion();
   createQuestions();
+  getInputValues();
 }
 apiHandler();

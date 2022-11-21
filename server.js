@@ -36,27 +36,29 @@ app.get("/questions", (req, res) => {
 app.get("/api/game", (req, res) => {
   let randomId = Math.floor(Math.random() * (11 - 1) + 1);
   const questionResponse = new Promise((res, rej) => {
-    const getQuestion = `SELECT * FROM quiz_app.questions  WHERE id =${randomId}`;
+    const getQuestion = `SELECT * FROM quiz_app.questions ORDER BY RAND() LIMIT 1`;
     conn.query(getQuestion, (err, rows) => {
       if (err) rej(err);
       res(rows[0]);
     });
   });
-
-  const answersResponse = new Promise((res, rej) => {
-    const getAnswers = `SELECT * FROM quiz_app.answers WHERE question_id=${randomId}`;
-    conn.query(getAnswers, (err, rows) => {
-      if (err) rej(err);
-      res(rows);
+  const answerFunction = (id) => {
+    const answersResponse = new Promise((res, rej) => {
+      const getAnswers = `SELECT * FROM quiz_app.answers WHERE question_id=${id}`;
+      conn.query(getAnswers, (err, rows) => {
+        if (err) rej(err);
+        res(rows);
+      });
     });
-  });
+    return answersResponse;
+  };
 
   const apiHandler = async () => {
     const question = await questionResponse
       .then((response) => response)
       .catch((err) => console.log(err));
 
-    const answers = await answersResponse
+    const answers = await answerFunction(question.id)
       .then((response) => response)
       .catch((err) => console.log(err));
 
