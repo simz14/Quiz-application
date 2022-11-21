@@ -1,10 +1,11 @@
 "use strict";
-
+const body = document.querySelector("body");
 //THIS PART CREATES THE HTML FOR DELETE
 const createDeleteElements = (data) => {
-  const body = document.querySelector("body");
   const manageWrapper = document.createElement("div");
   manageWrapper.className = "manageWrapper";
+  const deleteWrapper = document.createElement("div");
+  deleteWrapper.id = "deleteWrapper";
 
   data.forEach((question) => {
     const questionTitle = document.createElement("div");
@@ -15,8 +16,10 @@ const createDeleteElements = (data) => {
     const deletButton = document.createElement("button");
     deletButton.innerText = "Delete";
     questionTitle.appendChild(deletButton);
-    manageWrapper.appendChild(questionTitle);
+
+    deleteWrapper.appendChild(questionTitle);
   });
+  manageWrapper.appendChild(deleteWrapper);
   body.appendChild(manageWrapper);
 };
 //TTHIS PART DELETES THE SELECTED QUESTION
@@ -38,7 +41,6 @@ const deleteQuestion = () => {
 };
 
 const createQuestions = () => {
-  const body = document.querySelector("body");
   const createWrapper = document.createElement("div");
   createWrapper.className = "createWrapper";
 
@@ -59,19 +61,35 @@ const createQuestions = () => {
   createInputField(answer3, "Type your answear here", "inputAnwer3");
   const answer4 = document.createElement("input");
   createInputField(answer4, "Type your answear here", "inputAnwer4");
+  const submitButton = document.createElement("button");
+  submitButton.id = "submitB";
+  submitButton.innerText = "Submit";
 
+  submitButton.addEventListener("click", (e) => {
+    alert("added");
+    const result = () => {
+      const sendBack = postApiHandler("mmmm", 1, "Mmmm", true);
+      return sendBack;
+    };
+    console.log(result());
+  });
+
+  createWrapper.appendChild(submitButton);
   body.appendChild(createWrapper);
 };
-/*const getInputValues = () => {
+const getInputValues = () => {
   const inputs = document.querySelectorAll("[data-type=input]");
   inputs.forEach((input) => {
     input.addEventListener("change", (e) => {
+      const question = "";
+      const answer = "";
       if ((input.className = "inputQuestion")) {
-        const question = e.target.value;
+        question = e.target.value;
       }
+      return question;
     });
   });
-};*/
+};
 
 //THIS PART WORKS WITH DELETE API
 const deleteHandler = (id) => {
@@ -83,15 +101,30 @@ const deleteHandler = (id) => {
   }).catch((err) => err);
 };
 
+const postApiHandler = (question, question_id, answer, is_correct) => {
+  fetch("/api/questions", {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({
+      question: question,
+      answers: [
+        { answer: answer, question_id: question_id, is_correct: is_correct },
+        { answer: answer, question_id: question_id, is_correct: is_correct },
+      ],
+    }),
+  });
+};
 //THIS PART CREATES AND CALLS FUNCTIONS FOR HTML ELEMENT
-async function apiHandler() {
+const apiHandler = async () => {
   const data = await fetch("/api/questions")
     .then((res) => res.json())
     .catch((err) => err);
-  console.log(data);
   createDeleteElements(data);
   deleteQuestion();
   createQuestions();
   getInputValues();
-}
+};
 apiHandler();

@@ -9,6 +9,7 @@ app.use(express.static("public"));
 app.use(express.static("public/manageQuestions"));
 //--------------------------------express set up
 let mysql = require("mysql");
+const { Console } = require("console");
 
 let conn = mysql.createConnection({
   host: "localhost",
@@ -34,7 +35,6 @@ app.get("/questions", (req, res) => {
 });
 
 app.get("/api/game", (req, res) => {
-  let randomId = Math.floor(Math.random() * (11 - 1) + 1);
   const questionResponse = new Promise((res, rej) => {
     const getQuestion = `SELECT * FROM quiz_app.questions ORDER BY RAND() LIMIT 1`;
     conn.query(getQuestion, (err, rows) => {
@@ -84,8 +84,15 @@ app.delete("/api/questions/:id", (req, res) => {
 
 app.post("/api/questions", (req, res) => {
   const question = req.body.question;
-  conn.query(`INSERT INTO questions VALUES(${question})`);
-  conn.query(`INSERT INTO answers VALUES(${answer},${is_correct})`);
+  const answer = req.body.answers[0].answer;
+  const is_correct = req.body.answers[0].is_correct;
+  const question_id = req.body.answers[0].question_id;
+  console.log(req.body);
+  conn.query(`INSERT INTO questions(question) VALUES("${question}")`);
+  conn.query(
+    `INSERT INTO answers(question_id,answer,is_correct) VALUES(${question_id},"${answer}",${is_correct})`
+  );
+  res.sendStatus(200);
 });
 
 app.listen(port, () => {
