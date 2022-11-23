@@ -84,15 +84,44 @@ app.delete("/api/questions/:id", (req, res) => {
 
 app.post("/api/questions", (req, res) => {
   const question = req.body.question;
-  const answer = req.body.answers[0].answer;
-  const is_correct = req.body.answers[0].is_correct;
-  const question_id = req.body.answers[0].question_id;
-  console.log(req.body);
-  conn.query(`INSERT INTO questions(question) VALUES("${question}")`);
-  conn.query(
-    `INSERT INTO answers(question_id,answer,is_correct) VALUES(${question_id},"${answer}",${is_correct})`
-  );
-  res.sendStatus(200);
+  const answer = req.body.answers;
+  console.log(req.body.answers);
+  const insertQPromise = new Promise((res, rej) => {
+    conn.query(
+      `INSERT INTO questions(question) VALUES("${question}")`,
+      (err, row) => {
+        if (err) {
+          rej(404);
+        }
+        res(200);
+      }
+    );
+  });
+  const getIdPromise = new Promise((res, rej) => {
+    conn.query(
+      `SELECT id FROM questions WHERE question = "${question}"`,
+      (err, row) => {
+        if (err) {
+          rej(404);
+        }
+        res(row);
+      }
+    );
+  });
+
+  const apiHandler = async () => {
+    const insertQ = await insertQPromise.then((res) => res).catch((err) => err);
+    console.log(insertQ);
+    const insertA = await getIdPromise.then((res) => res).catch((err) => err);
+
+    answer.forEach((answer) => {
+      conn.query(
+        `INSERT INTO answers(question_id,answer,is_correct) VALUES(${insertA[0].id},"${answer.answer}",${answer.is_correct})`
+      );
+    });
+    res.sendStatus(200);
+  };
+  apiHandler();
 });
 
 app.listen(port, () => {

@@ -1,6 +1,7 @@
 "use strict";
 const wrapper = document.getElementById("wrapper");
 let counter = 0;
+const body = document.querySelector("body");
 
 //CREATING HTML QUESTION
 const createQuestion = (data) => {
@@ -26,9 +27,10 @@ const createQuestion = (data) => {
   manageLink.href = "/questions";
   manageLink.innerText = "Manage Questions";
   manageLink.className = "link";
-
   questionWrapper.appendChild(manageLink);
+
   wrapper.appendChild(questionWrapper);
+  body.appendChild(wrapper);
 };
 const getNewxtQuestion = () => {
   const questionWrapper = document.getElementById("questionWrapper");

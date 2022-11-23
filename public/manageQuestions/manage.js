@@ -43,52 +43,83 @@ const deleteQuestion = () => {
 const createQuestions = () => {
   const createWrapper = document.createElement("div");
   createWrapper.className = "createWrapper";
+  const inputFields = document.createElement("div");
+  inputFields.className = "inputFields";
 
   const createInputField = (name, placeholder, classname) => {
+    const fieldWrapper = document.createElement("div");
+    fieldWrapper.className = "fieldWrapper";
     name.setAttribute("type", "text");
     name.placeholder = placeholder;
     name.className = classname;
     name.dataset.type = "input";
-    createWrapper.appendChild(name);
+    const rightAnswer = document.createElement("input");
+    rightAnswer.setAttribute("type", "radio");
+    rightAnswer.name = "is_correct";
+
+    fieldWrapper.appendChild(name);
+    fieldWrapper.appendChild(rightAnswer);
+    inputFields.appendChild(fieldWrapper);
   };
   const question = document.createElement("input");
   createInputField(question, "Type your question here", "inputQuestion");
   const answer1 = document.createElement("input");
-  createInputField(answer1, "Type your answear here", "inputAnwer1");
+  createInputField(answer1, "Type your answear here", "inputAnswer");
+
   const answer2 = document.createElement("input");
-  createInputField(answer2, "Type your answear here", "inputAnwer2");
+  createInputField(answer2, "Type your answear here", "inputAnswer");
   const answer3 = document.createElement("input");
-  createInputField(answer3, "Type your answear here", "inputAnwer3");
+  createInputField(answer3, "Type your answear here", "inputAnswer");
   const answer4 = document.createElement("input");
-  createInputField(answer4, "Type your answear here", "inputAnwer4");
+  createInputField(answer4, "Type your answear here", "inputAnswer");
   const submitButton = document.createElement("button");
   submitButton.id = "submitB";
   submitButton.innerText = "Submit";
 
   submitButton.addEventListener("click", (e) => {
-    alert("added");
-    const result = () => {
-      const sendBack = postApiHandler("mmmm", 1, "Mmmm", true);
-      return sendBack;
-    };
-    console.log(result());
+    sendInputValues();
   });
 
-  createWrapper.appendChild(submitButton);
+  inputFields.appendChild(submitButton);
+  createWrapper.appendChild(inputFields);
   body.appendChild(createWrapper);
+  const link = document.createElement("a");
+  link.href = "/game";
+  link.innerText = "Back to quiz";
+  link.className = "link";
+  body.appendChild(link);
 };
-const getInputValues = () => {
-  const inputs = document.querySelectorAll("[data-type=input]");
-  inputs.forEach((input) => {
-    input.addEventListener("change", (e) => {
-      const question = "";
-      const answer = "";
-      if ((input.className = "inputQuestion")) {
-        question = e.target.value;
+
+const sendInputValues = async () => {
+  const answerObjects = await getAnswerValues().then((res) => res);
+  const question = document.querySelector(".inputQuestion");
+  postApiHandler(question.value, answerObjects);
+};
+
+const getAnswerValues = () => {
+  const answers = document.querySelectorAll(".inputAnswer");
+  const promiseForAnswers = new Promise((res, rej) => {
+    document.querySelectorAll(".inputAnswer");
+    let answersToSend = [];
+    answers.forEach((answer) => {
+      if (answer.nextElementSibling.checked) {
+        answersToSend.push({
+          answer: answer.value,
+          is_correct: 1,
+        });
       }
-      return question;
+      if (!answer.nextElementSibling.checked) {
+        answersToSend.push({
+          answer: answer.value,
+          is_correct: 0,
+        });
+      }
+
+      res(answersToSend);
     });
+    console.log(answersToSend);
   });
+  return promiseForAnswers;
 };
 
 //THIS PART WORKS WITH DELETE API
@@ -101,7 +132,7 @@ const deleteHandler = (id) => {
   }).catch((err) => err);
 };
 
-const postApiHandler = (question, question_id, answer, is_correct) => {
+const postApiHandler = (question, answers) => {
   fetch("/api/questions", {
     headers: {
       Accept: "application/json",
@@ -110,10 +141,7 @@ const postApiHandler = (question, question_id, answer, is_correct) => {
     method: "POST",
     body: JSON.stringify({
       question: question,
-      answers: [
-        { answer: answer, question_id: question_id, is_correct: is_correct },
-        { answer: answer, question_id: question_id, is_correct: is_correct },
-      ],
+      answers: answers,
     }),
   });
 };
@@ -125,6 +153,5 @@ const apiHandler = async () => {
   createDeleteElements(data);
   deleteQuestion();
   createQuestions();
-  getInputValues();
 };
 apiHandler();

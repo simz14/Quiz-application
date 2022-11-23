@@ -8,8 +8,7 @@ body {
     rgba(215, 215, 255, 1) 96%
   );
   background-repeat: no-repeat;
-  height: 100vh;
-
+  background-size: cover;
   margin: 50px;
 }
 .manageWrapper {
@@ -25,4 +24,77 @@ body {
 }
 #deleteWrapper {
   display: grid;
+}
+#deleteWrapper > div {
+  border-bottom: 2px solid rgb(96, 96, 211);
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+#deleteWrapper:last-child() {
+  border-bottom: none;
+}
+#deleteWrapper::before {
+  content: "Delete question";
+  display: block;
+  justify-self: center;
+  border-bottom: 1px solid rgb(55, 55, 194);
+}
+#deleteWrapper > div button {
+  background-color: rgb(55, 55, 194);
+  height: 45px;
+  width: 30%;
+  margin-top: 20px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 800;
+  display: block;
+  justify-self: right;
+  border: none;
+  cursor: pointer;
+}
+.createWrapper {
+  display: grid;
+  justify-content: center;
+  margin-left: 10%;
+  width: 80%;
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  font-size: 30px;
+}
+.createWrapper::before {
+  content: "Create new question";
+  display: block;
+  justify-self: center;
+  border-bottom: 1px solid rgb(55, 55, 194);
+}
+.inputFields {
+  display: grid;
+}
+.inputFields .fieldWrapper > [data-type="input"] {
+  width: 600px;
+  height: 50px;
+  margin-top: 20px;
+}
+.inputQuestion + input {
+  display: none;
+}
+
+#submitB {
+  background-color: rgb(55, 55, 194);
+  height: 45px;
+  width: 30%;
+  margin-top: 20px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 800;
+  display: block;
+  justify-self: right;
+  border: none;
+  cursor: pointer;
+}
+.link {
+  margin-left: 47%;
+  color: rgb(195, 195, 222);
 }

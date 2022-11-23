@@ -50,7 +50,7 @@ body {
 }
 .link {
   margin-left: 40%;
-  margin-top: 20px;
+  color: rgb(195, 195, 222);
 }
 .answer.success {
   background-color: rgb(74, 165, 74);
@@ -76,4 +76,8 @@ body {
 }
 #nextQuestion:hover {
   background-color: rgb(30, 30, 119);
+}
+.questionWrapper h2 {
+  display: flex;
+  justify-content: center;
 }
