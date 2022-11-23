@@ -69,10 +69,20 @@ app.get("/api/game", (req, res) => {
 
 app.get("/api/questions", (req, res) => {
   const getQuestion = `SELECT * FROM quiz_app.questions`;
-  conn.query(getQuestion, (err, rows) => {
-    if (err) rej(err);
-    res.send(rows);
+  const rowsPromise = new Promise((res, rej) => {
+    conn.query(getQuestion, (err, rows) => {
+      if (err) {
+        rej(400);
+      }
+      res(rows);
+    });
   });
+  const apiHandler = async () => {
+    const response = await rowsPromise.then((res) => res).catch((err) => err);
+    res.send(response);
+  };
+
+  apiHandler();
 });
 
 app.delete("/api/questions/:id", (req, res) => {
